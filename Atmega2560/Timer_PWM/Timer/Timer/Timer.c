@@ -35,7 +35,7 @@ void Timer_init(TIMER *timer)
 			TCNT1   = timer->TCNT_value;
 			TIMSK1 |= (1 << TOIE1);
 		}
-		else if(timer->Mode == CTC_MODE)
+		else if(timer->Mode == CTC_MODE_OCRnA)
 		{
 			SET_BIT(TCCR1B, (1 << WGM12));
 			TCNT1 = 0;
@@ -70,7 +70,7 @@ void Clear_Interrupt_Flag(TIMER *timer)
 			while(!(TIFR1 & (1 << TOV1)));
 			TIFR1 |= (1 << TOV1);
 		}
-		else if(timer->Mode == CTC_MODE)
+		else if(timer->Mode == CTC_MODE_OCRnA)
 		{
 			while(!(TIFR1 & (1 << OCF1A)) || !(TIFR1 & (1 << OCF1B)));
 			TIFR1 |= (1 << OCF1A) | (1 << OCF1B);

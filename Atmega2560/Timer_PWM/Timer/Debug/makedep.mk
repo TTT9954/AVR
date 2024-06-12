@@ -4,6 +4,8 @@
 
 main.c
 
+Timer\millis.c
+
 Timer\PWM.c
 
 Timer\Timer.c

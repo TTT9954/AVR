@@ -1,73 +1,126 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/delay.h>
+//#include "app_api.h"
+
 #include "Timer.h"
-#include "PWM.h"
 
 #define BUTTON_PIN    PD3
-#define LED_PIN_1     PD2
-#define LED_PIN_2     PB7
+#define LED_PIN_0     (1 << PF0)
+#define LED_PIN_1     (1 << PF1)
+#define LED_PIN_2     (1 << PF2)
+#define LED_PIN_3     (1 << PF3)
+#define LED_PIN_4     (1 << PF4)
+#define LED_PIN_5     (1 << PF5)
+#define LED_PIN_6     (1 << PF6)
+#define LED_PIN_7     (1 << PF7)
 
+#define DDRx(pin,port,state)    ((state == 1) ? (port |= pin) : (port &= ~(pin)))
+#define PORTx(pin,port,state)   ((state == 1) ? (port |= pin) : (port &= ~(pin)))
+#define TOGGLE(pin, port)       (port ^= pin)
+
+#define MAX_BRIGHTNESS           100
+
+typedef struct LED
+{
+	uint8_t Led0;
+	uint8_t Led1;
+	uint8_t Led2;
+	uint8_t Led3;
+	uint8_t Led4;
+	uint8_t Led5;
+	uint8_t Led6;
+	uint8_t Led7;
+} LEDs;
+
+typedef enum
+{
+	UP,
+	DOWN
+} DIRECTION;
+
+LEDs  pwm[10] = {
+	{1, 0, 1, 0, 1, 0, 1, 0},
+	{0, 1, 0, 1, 0, 1, 0, 1},
+};
 
 uint8_t read = 0;
 uint8_t state = 0;
 
-TIMER timer0 = {TIMER0, NORMAL_MODE, PRES_64, 131, 0};
-TIMER timer1 = {TIMER1, CTC_MODE, PRES_64, 0, 12500};
+volatile uint16_t count = 0;
+volatile uint8_t count1 = 0;
 
-void PWM_configure(uint8_t Mode_PWM, uint8_t Mode_OCnx)
-{
-	PWM pwm_fastmode;
-	
-	pwm_fastmode.timerx.Timerx = TIMER1;
-	pwm_fastmode.Mode_PWM = Mode_PWM;
-	pwm_fastmode.Mode_OCnx = Mode_OCnx;
+uint8_t brightness = 0;
+const uint8_t brightnessLevel[16] = {0, 1, 2, 3, 5, 7, 10, 15, 26, 32, 39, 46, 57, 67, 80, 100};
 
-	PWM_Init(&pwm_fastmode);
-}
+uint8_t LedNum[8];
+
+void pattern1();
+void pattern2();
+
 int main(void)
 {
-	//debug_init();
-	CLKPR |= (1 << CLKPS0);
-	DDRD  &= ~(1 << BUTTON_PIN);
-	DDRD  |= (1 << LED_PIN_1);
-	DDRB  |= 0xFF;
-	PORTD = PORTB = 0;
+	uint8_t a = 0x08;
+	uint8_t b = 0x10;
+	uint8_t flag = 0;
+	
+	DDRx(0xFF, DDRF, OUTPUT);
 
-	Timer_init(&timer0);
-	//Timer_init(&timer1);
-	PWM_configure(FAST_PWM_MODE_TOP_0xFF, TOGGLE_OCx);
-
-	sei();
+	PORTx(0xFF, PORTF, LOW);
+	
 	while(1)
-	{	
-
+	{
+		if(flag == 0)
+		{
+			if(a == 0x00 || b == 0x80)
+			{
+				flag = 1;
+				a = 0x08;
+				b = 0x10;
+			}
+			PORTF |= a|b;
+			_delay_ms(1000);
+			a <<= 1;
+			b >>= 1;
+		}
+		else if(flag == 1)
+		{
+			if(a == 0x08 || b == 0x10)
+			{
+				flag = 0;
+				a = 0x00;
+				b = 0x80;
+			}
+			PORTF &= ~(a|b);
+			_delay_ms(1000);
+			a <<= 1;
+			b >>= 1;
+		}
 	}
-
 }
 
-
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER1_OVF_vect)
 {
-	static volatile uint16_t count = 0;
+	TCNT1 = 65535;
+}
 
-	Reload_OCR_value(&timer1);
-	count++;
-	if(count == 1)
+void pattern1()
+{
+	for(uint8_t countDS = 0; countDS < 8; countDS++)
 	{
-		PORTB ^= (1 << LED_PIN_2);
-		count = 0;
+		PORTx(1 << countDS, PORTF,  HIGH);
+		_delay_ms(50);
+	}
+	for(uint8_t countDS = 0; countDS < 8; countDS++)
+	{
+		PORTx(1 << (7-countDS), PORTF,  LOW);
+		_delay_ms(50);
 	}
 }
 
-ISR(TIMER0_OVF_vect)
+void pattern2()
 {
-	static volatile uint16_t count = 0;
 
-	Reload_TCNT_value(&timer0);
-	count++;
-	if(count == 100)
-	{
-		PORTD ^= (1 << LED_PIN_1);
-		count = 0;
-	}
 }
 
 

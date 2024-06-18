@@ -70,38 +70,14 @@ int main(void)
 	
 	while(1)
 	{
-		if(flag == 0)
-		{
-			if(a == 0x00 || b == 0x80)
-			{
-				flag = 1;
-				a = 0x08;
-				b = 0x10;
-			}
-			PORTF |= a|b;
-			_delay_ms(1000);
-			a <<= 1;
-			b >>= 1;
-		}
-		else if(flag == 1)
-		{
-			if(a == 0x08 || b == 0x10)
-			{
-				flag = 0;
-				a = 0x00;
-				b = 0x80;
-			}
-			PORTF &= ~(a|b);
-			_delay_ms(1000);
-			a <<= 1;
-			b >>= 1;
-		}
+
 	}
 }
 
 ISR(TIMER1_OVF_vect)
 {
 	TCNT1 = 65535;
+	
 }
 
 void pattern1()

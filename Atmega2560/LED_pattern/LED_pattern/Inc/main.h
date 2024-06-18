@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+
 
 #define CLEAR_BIT(REG, BIT)     (REG &= ~(BIT))
 #define SET_BIT(REG, BIT)       (REG |= (BIT))
@@ -16,4 +18,9 @@
 
 #define OUTPUT		1
 #define INPUT		0
+
+#define DDRx(pin,port,state)    ((state == 1) ? (port |= pin) : (port &= ~(pin)))
+#define PORTx(pin,port,state)   ((state == 1) ? (port |= pin) : (port &= ~(pin)))
+#define TOGGLE(pin, port)       (port ^= pin)
+
 #endif 

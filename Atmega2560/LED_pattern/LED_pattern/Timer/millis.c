@@ -28,7 +28,7 @@ volatile UUL_INT millis()
 	return timer;
 } 
 
-#ifndef TIMx_OVF
+/*#ifdef MILLIS_H_
 	ISR(TIMER0_OVF_vect)
 	{
 		Reload_TCNT_value(&timer0);
@@ -41,4 +41,4 @@ volatile UUL_INT millis()
 		Reload_TCNT_value(&timer0);
 		count++;
 	}
-#endif
+#endif*/

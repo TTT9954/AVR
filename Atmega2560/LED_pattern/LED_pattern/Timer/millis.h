@@ -11,14 +11,16 @@
 
 #include <limits.h>
 #include "Timer.h"
+#include "../Inc/main.h"
 
-#define UUL_INT		unsigned long long int
+
+typedef unsigned long long int UL_INT;		
 
 void millis_init();
 void micros_init();
 
-volatile UUL_INT millis();
-volatile UUL_INT micros();
+UL_INT millis();
+UL_INT micros();
 
 
 

@@ -1,11 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
+#include <avr/delay.h>
 
+#define F_CPU	16000000UL
 
 #define CLEAR_BIT(REG, BIT)     (REG &= ~(BIT))
 #define SET_BIT(REG, BIT)       (REG |= (BIT))
@@ -23,4 +23,8 @@
 #define PORTx(pin,port,state)   ((state == 1) ? (port |= pin) : (port &= ~(pin)))
 #define TOGGLE(pin, port)       (port ^= pin)
 
-#endif 
+typedef unsigned char	u8;
+typedef unsigned short	u16;
+typedef unsigned int	u32;
+typedef unsigned long	UL;
+#endif

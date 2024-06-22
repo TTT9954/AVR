@@ -10,25 +10,25 @@
 #define LEDMATRIX_H_
 
 #include "../Inc/main.h"
-#include <util/delay.h>
+
 
 enum DIRECTION{
 	LEFT,
 	RIGHT
 };
-extern uint8_t colScan[8];
+extern u8 colScan[8];
 
-extern uint8_t character[][8];
+extern u8 character[][8];
 
-extern uint8_t Matrix_Pattern;
+extern u8 Matrix_Pattern;
 
-extern uint8_t Scan_Matrix_Char;
+extern u8 Scan_Matrix_Char;
 
-extern uint8_t scanTime;
+extern u8 scanTime;
 
-extern const uint8_t temp_character[26][8];
+extern const u8 temp_character[27][8];
 
-extern uint8_t Char;
+extern u8 Char;
 
 void LedMatrix_Pin_Init();
 
@@ -38,11 +38,11 @@ void Display_Character(char c);
 
 void Display_String(char *str);
 
-void Shift_LedMatrix(char c);
+void Shift_LedMatrix(u8 mode, u32 speed);
 
-void ShiftLeft();
+void ShiftLeft(u32 speed);
 
-void ShiftRight();
+void ShiftRight(u32 speed);
 
 void Pattern1();
 #endif /* LEDMATRIX_H_ */

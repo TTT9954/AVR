@@ -1,13 +1,12 @@
 #include "millis.h"
 
-#define TIM0_OVF	TIMER0_OVF_vect
+volatile UL_INT count_millis = 0;
 
-static volatile UUL_INT count = 0;
-
-static volatile UUL_INT count1 = 0;
+static volatile UL_INT count1 = 0;
 
 
 static TIMER timer0 = {TIMER0, NORMAL_MODE, PRES_64, 6};
+	
 static TIMER timer1 = {TIMER0, NORMAL_MODE, PRES_1, 240};
 
 
@@ -21,24 +20,16 @@ void micros_init()
 	Timer_init(&timer1);
 }
 
-volatile UUL_INT millis()
+UL_INT millis()
 {
-	volatile UUL_INT timer = count;
+	UL_INT timer = count_millis;
 	
 	return timer;
 } 
 
-/*#ifdef MILLIS_H_
-	ISR(TIMER0_OVF_vect)
-	{
-		Reload_TCNT_value(&timer0);
-		count++;
-	}
-#else 
-	ISR(TIM0_OVF)
-	{
-		static volatile UUL_INT count = 0;
-		Reload_TCNT_value(&timer0);
-		count++;
-	}
-#endif*/
+// 
+// ISR(TIMER0_OVF_vect)
+// {
+// 	TCNT0 = 5;
+// 	count_millis++;
+// }

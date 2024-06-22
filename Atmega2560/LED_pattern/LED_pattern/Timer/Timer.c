@@ -29,7 +29,7 @@ void Timer_init(TIMER *timer)
 		CLEAR_BIT(TCCR1B, 0xFF);
 		CLEAR_BIT(TIMSK1, 0xFF);
 
-		TCCR1B |= (timer->Prescaler << CS00);
+		TCCR1B |= (timer->Prescaler << CS10);
 		if(timer->Mode == NORMAL_MODE)
 		{
 			TCNT1   = timer->TCNT_value;

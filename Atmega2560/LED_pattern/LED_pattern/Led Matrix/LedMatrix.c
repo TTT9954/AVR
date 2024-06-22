@@ -1,19 +1,27 @@
 #include "LedMatrix.h"
 
-uint8_t colScan[8] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F};
 
-uint8_t Matrix_Pattern = 0;
+u8 colScan[8] = {0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F};
 
-static uint8_t row = 0x00;
-static uint8_t col = 0xFE;
-static uint8_t i = 0;
-static uint8_t n = 0;
+u8 Matrix_Pattern = 0;
 
-uint8_t scanTime = 0;
+static u8 row = 0x00;
+static u8 col = 0xFE;
+static u8 i = 0;
+static u8 n = 0;
 
-uint8_t Char = 0;
+u8 scanTime = 0;
 
-uint8_t character[26][8] = {
+u8 Char = 0;
+
+
+
+
+void delay_speed(u32 speed);
+
+
+u8 character[27][8] = {
+	{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
 	{0x00,0xFC,0x0E,0x09,0x09,0x0E,0xFC,0x00}, // A
 	{0x00,0xff,0xff,0x99,0x99,0x99,0x66,0x00}, // B
 	{0x00,0x3c,0x42,0x81,0x81,0x81,0x00,0x00}, // C
@@ -42,8 +50,9 @@ uint8_t character[26][8] = {
 	{0x81,0xc1,0xa1,0x91,0x89,0x85,0x83,0x81}, // Z
 };
 
-const uint8_t temp_character[26][8] = 
+const u8 temp_character[27][8] = 
 {
+	{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
 	{0x00,0xFC,0x0E,0x09,0x09,0x0E,0xFC,0x00}, // A
 	{0x00,0xff,0xff,0x99,0x99,0x99,0x66,0x00}, // B
 	{0x00,0x3c,0x42,0x81,0x81,0x81,0x00,0x00}, // C
@@ -72,7 +81,7 @@ const uint8_t temp_character[26][8] =
 	{0x81,0xc1,0xa1,0x91,0x89,0x85,0x83,0x81}, // Z
 };
 	
-static  uint8_t ShiftLed[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static  u8 ShiftLed[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	
 void LedMatrix_Pin_Init()
 {
@@ -92,7 +101,7 @@ void Scan_LedMatrix()
 
 void Display_Character(char c)
 {
-	Char = (uint8_t)c - 65;
+	Char = (u8)c - 64;
 }
 
 void Display_String(char *str)
@@ -100,41 +109,15 @@ void Display_String(char *str)
 	
 }
 
-void Shift_LedMatrix(char c)
+void Shift_LedMatrix(u8 mode, u32 speed)
 {
-	
-}
-void Pattern1()
-{
-	PORTK = 0x00;
-	PORTF = row;
-	if(Matrix_Pattern == 1)
+	if(mode == LEFT)
 	{
-		Matrix_Pattern = 0;
-		if(i == 0)
-		{
-			++n;
-			if(n > 15)
-			{
-				n = 0;
-				row = 0x80;
-				i = 1;
-			}
-			if(n%2 == 0) row = row << 1;
-			else row = row | 0x1;
-		}
-		else if(i == 1)
-		{
-			++n;
-			if(n > 15)
-			{
-				n = 0;
-				row = 0x01;
-				i = 0;
-			}
-			if(n%2 == 0) row = row >> 1;
-			else row = row | 0x80;
-		}
+		ShiftLeft(speed);
+	}
+	else
+	{
+		ShiftRight(speed);
 	}
 }
 
@@ -143,45 +126,62 @@ void Refresh()
 
 }
 
-void ShiftLeft()
+void ShiftLeft(u32 speed)
 {
-	for(uint8_t i = 0; i < 8; i++)
+	u32 temp = speed;
+
+	for(u8 i = 0; i < 8; i++)
 	{
 		ShiftLed[i] = temp_character[Char][i];
 	}
-	for(uint8_t k = 0; k < 8; k++)
+	for(u8 k = 0; k < 8; k++)
 	{
-		for(uint8_t i = 0; i < 7; i++)
+		for(u8 i = 0; i < 7; i++)
 		{
 			ShiftLed[i] = ShiftLed[i+1];
 		}
 		ShiftLed[7] = temp_character[Char][k];
-		for(uint8_t i = 0; i < 8; i++)
+		for(u8 i = 0; i < 8;)
 		{
-			character[Char][i] = ShiftLed[i];
-			_delay_ms(100);
+			temp--;
+			_delay_ms(1);
+			if(temp <= 0)
+			{
+				temp = speed;
+				character[Char][i] = ShiftLed[i];
+				i++;
+			}
 		}
+		//character[Char][7] = temp_character[Char][k];
 	}	
 }
 
-void ShiftRight()
+void ShiftRight(u32 speed)
 {
-	for(uint8_t i = 0; i < 8; i++)
+	u32 temp = speed;
+	for(u8 i = 0; i < 8; i++)
 	{
 		ShiftLed[i] = temp_character[Char][i];
 	}
-	for(uint8_t k = 8; k > 0; k--)
+	for(u8 k = 8; k > 0; k--)
 	{
-		for(uint8_t i = 7; i > 0; i--)
+		for(u8 i = 7; i > 0; i--)
 		{
 			ShiftLed[i] = ShiftLed[i-1];
 		}
 		ShiftLed[0] = temp_character[Char][k-1];
-		for(uint8_t i = 7; i > 0; i--)
+		for(u8 i = 7; i > 0;)
 		{
-			character[Char][i] = ShiftLed[i];
-			_delay_ms(100);
+			temp--;
+			_delay_ms(1);
+			if(temp <= 0)
+			{
+				temp = speed;
+				character[Char][i] = ShiftLed[i];
+				i--;
+			}				
 		}
-		character[Char][0] = temp_character[Char][k-1];
+		character[Char][0] = temp_character[Char][k-1];			
 	}	
 }
+

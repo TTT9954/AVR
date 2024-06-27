@@ -1,15 +1,7 @@
-/*
- * LedMatrix.h
- *
- * Created: 6/16/24 11:53:55 PM
- *  Author: TuTran
- */ 
-
-
 #ifndef LEDMATRIX_H_
 #define LEDMATRIX_H_
 
-#include "../Inc/main.h"
+#include "E:\AVR\Atmega2560\Lib\std_type.h"
 
 
 enum DIRECTION{

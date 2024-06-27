@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "../Inc/main.h"
+#include "std_type.h"
 
 typedef struct Timer
 {

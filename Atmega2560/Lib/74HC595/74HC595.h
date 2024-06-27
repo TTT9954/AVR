@@ -9,7 +9,7 @@
 #ifndef _74HC595_H_
 #define _74HC595_H_
 
-#include "../Inc/main.h"
+#include "std_type.h"
 
 #define HC595_DDR		DDRF
 #define HC595_PORT		PORTF

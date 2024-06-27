@@ -1,4 +1,5 @@
-app.d app.o: .././app.c .././app.h .././Inc/main.h \
+app.d app.o: .././app.c .././app.h E:\AVR\Atmega2560\Lib\Timer\Timer.h \
+ C:\Users\trant\Documents\Atmel\ Studio\7.0/std_type.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -18,7 +19,9 @@ app.d app.o: .././app.c .././app.h .././Inc/main.h \
 
 .././app.h:
 
-.././Inc/main.h:
+E:\AVR\Atmega2560\Lib\Timer\Timer.h:
+
+C:\Users\trant\Documents\Atmel\ Studio\7.0/std_type.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
